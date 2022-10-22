@@ -5,15 +5,15 @@
 
 
 
-class Sandbox : public Orion::Application 
+class Simulation : public Orion::Application 
 {
 	
 public: 
-	Sandbox() 
+	Simulation() 
 	{
 		PushLayer(new PixelSimulation::SimulationLayer());
 	}
-	~Sandbox() 
+	~Simulation() 
 	{
 	
 	}
@@ -21,5 +21,5 @@ public:
 
 Orion::Application* Orion::CreateApplication()
 {
-	return new Sandbox();
+	return new Simulation();
 }

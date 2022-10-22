@@ -19,6 +19,7 @@ flags
 	IncludeDir["Orion"] = "vendor/OrionEngine/Orion"
 
 	group "Dependencies"
+	
 	externalproject "Orion"
 		location "PixelSimulation/vendor/OrionEngine/Orion"
 		uuid "57943020-8A99-EAB6-271F-61E0F7F6B73B"
@@ -32,6 +33,7 @@ flags
 		include "PixelSimulation/vendor/OrionEngine/Orion/vendor/GLFW"
 		include "PixelSimulation/vendor/OrionEngine/Orion/vendor/Glad"
 		include "PixelSimulation/vendor/OrionEngine/Orion/vendor/imgui"
+
 		group ""
 
 
@@ -58,7 +60,8 @@ project "PixelSimulation"
 		"PixelSimulation/vendor/OrionEngine/Orion/src",
 		"PixelSimulation/vendor/OrionEngine/Orion/vendor/ImGui",
 		"PixelSimulation/vendor/OrionEngine/Orion/vendor/glm",
-		"PixelSimulation/vendor/OrionEngine/Orion/vendor/spdlog/include"
+		"PixelSimulation/vendor/OrionEngine/Orion/vendor/spdlog/include",
+		"PixelSimulation/vendor/OrionEngine/Orion/vendor/assimp/Release/include"
 	}
 
 	links
