@@ -13,11 +13,12 @@ namespace PixelSimulation
 			auto& app = Orion::Application::Get();
 			m_ScreenHeight = app.GetWindow().GetHeight();
 			m_ScreenWidth = app.GetWindow().GetWidth();
+			app.GetWindow().SetVSync(false);
 			ORI_INFO("{0}, {1}", m_ScreenWidth, m_ScreenHeight);
 			m_Matrix = PixelSimulation::CellularMatrix(m_ScreenWidth, m_ScreenHeight);
 			m_Camera = Orion::CreateShared<Orion::OrthographicCamera>(glm::vec3(0.0f),false, true);
-			Orion::CamerasController::AddCamera("PrimaryCamera", m_Camera);
 			Orion::CamerasController::AddCamera("SecondaryCamera", Orion::CreateShared<Orion::PerspectiveCamera>(glm::vec3(0.f,0.f,1.0f), glm::vec3(0.f, 0.f, -1.f)));
+			Orion::CamerasController::AddCamera("PrimaryCamera", m_Camera);
 			m_Camera->SetPosition(glm::vec3(1.f, 1.f, 0.f));
 			m_Camera->SetZoomLevel(1.0f);
 		}
@@ -51,15 +52,29 @@ namespace PixelSimulation
 			
 			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_1))
 			{
-				m_Matrix.SetCell(mouseX, mouseY, 1);
+				mouseY = (m_ScreenHeight - mouseY);
+				for (size_t i = 0; i < 25; i++)
+				{
+					for (size_t j = 0; j < 25; j++)
+					{
+
+						//std::cout << glm::distance(glm::vec2(mouseX + i, mouseY + j), glm::vec2(mouseX, mouseY)) << "\n";
+						if (glm::distance(glm::vec2(mouseX + i, mouseY + j), glm::vec2(mouseX, mouseY)) < 5) 
+						{
+							m_Matrix.SetCell(mouseX - i, mouseY - j, 1);
+							m_Matrix.SetCell(mouseX + i, mouseY + j, 1);
+						}
+
+					}
+				}
 			}
 
 
-			for (size_t i = 0; i < 20; i+=5)
+			for (size_t i = 0; i < 20; i+=1)
 			{
-				for (size_t j = 0; j < 20; j+=5)
+				for (size_t j = 0; j < 20; j+=1)
 				{
-					m_Matrix.SetCell(i, j, 1);
+					//m_Matrix.SetCell(i, j, 1);
 
 				}
 			}
