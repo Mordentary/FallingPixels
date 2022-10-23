@@ -13,7 +13,7 @@ namespace PixelSimulation
 			auto& app = Orion::Application::Get();
 			m_ScreenHeight = app.GetWindow().GetHeight();
 			m_ScreenWidth = app.GetWindow().GetWidth();
-			app.GetWindow().SetVSync(false);
+			app.GetWindow().SetVSync(true);
 			ORI_INFO("{0}, {1}", m_ScreenWidth, m_ScreenHeight);
 			m_Matrix = PixelSimulation::CellularMatrix(m_ScreenWidth, m_ScreenHeight);
 			m_Camera = Orion::CreateShared<Orion::OrthographicCamera>(glm::vec3(0.0f),false, true);
@@ -34,49 +34,30 @@ namespace PixelSimulation
 
 			Orion::Renderer2D::ResetStats();
 
-			
-			auto& cam = Orion::CamerasController::GetActiveCamera();
-
 			auto[mouseX,mouseY] = Orion::Input::GetMousePosition();
 			
+			mouseY = (m_ScreenHeight - mouseY);
 
-
-			float x = (2.0f * mouseX) / m_ScreenWidth - 1.0f;
-			float y = 1.0f - (2.0f * mouseY) / m_ScreenHeight;
-			float pixelSizeX = 2.0 / m_ScreenWidth;
-		
-
-
-			glm::vec4 ray_clip = glm::vec4(x, y, -1.0, 1.0);
-			glm::vec2 ray_eye = glm::vec2(glm::inverse(cam->GetProjectionMatrix()) * ray_clip);
 			
+			
+
 			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_1))
 			{
-				mouseY = (m_ScreenHeight - mouseY);
-				for (size_t i = 0; i < 25; i++)
-				{
-					for (size_t j = 0; j < 25; j++)
-					{
-
-						//std::cout << glm::distance(glm::vec2(mouseX + i, mouseY + j), glm::vec2(mouseX, mouseY)) << "\n";
-						if (glm::distance(glm::vec2(mouseX + i, mouseY + j), glm::vec2(mouseX, mouseY)) < 5) 
-						{
-							m_Matrix.SetCell(mouseX - i, mouseY - j, 1);
-							m_Matrix.SetCell(mouseX + i, mouseY + j, 1);
-						}
-
-					}
-				}
+			
+				m_Matrix.SetCell(mouseX, mouseY , SAND);
+		
 			}
-
-
-			for (size_t i = 0; i < 20; i+=1)
+			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_2))
 			{
-				for (size_t j = 0; j < 20; j+=1)
-				{
-					//m_Matrix.SetCell(i, j, 1);
+				
+				m_Matrix.SetCell(mouseX, mouseY, STONE);
 
-				}
+			}
+			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_4))
+			{
+
+				m_Matrix.SetCell(mouseX, mouseY, EMPTY);
+
 			}
 		
 
@@ -103,19 +84,12 @@ namespace PixelSimulation
 
 			m_Dispatcher->Dispatch<Orion::KeyPressedEvent>(ORI_BIND_EVENT_FN(SimulationLayer::OnKeyPressed));
 
-
-
-
-
-		
-
-
 		}
 	
 
 		bool SimulationLayer::OnWindowResized(Orion::WindowResizeEvent e) 
 		{
-
+			m_Matrix.Invalidate(e.GetWidth(), e.GetHeight());
 			return false;
 		}
 
@@ -131,7 +105,7 @@ namespace PixelSimulation
 			float y = 1.0f - (2.0f * mouseY) / m_ScreenHeight;
 			float z = 1.0f;
 
-			glm::vec3 ray_nds = glm::vec3(x, y, z);
+			/*glm::vec3 ray_nds = glm::vec3(x, y, z);
 
 			std::cout << "NDS: " << glm::to_string(ray_nds) << std::endl;
 
@@ -149,9 +123,7 @@ namespace PixelSimulation
 
 			glm::vec3 ray_wor = glm::vec3((inverse(cam->GetViewMatrix()) * glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0f)));
 
-			std::cout << "WORLD: " << glm::to_string(ray_eye) << std::endl; 
-
-
+			std::cout << "WORLD: " << glm::to_string(ray_eye) << std::endl; */
 		
 			return false;
 		}

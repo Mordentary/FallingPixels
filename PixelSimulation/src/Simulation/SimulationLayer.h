@@ -22,6 +22,8 @@ namespace PixelSimulation
 		bool OnKeyPressed(Orion::KeyPressedEvent e);
 
 		virtual void OnImGuiRender(Orion::Timestep ts) override;
+
+		
 	private:
 
 		PixelSimulation::CellularMatrix m_Matrix;

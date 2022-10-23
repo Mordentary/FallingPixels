@@ -1,64 +1,108 @@
 #include "CellularMatrix.h"
+#include<Orion/Core/Core.h>
+#include<Orion/Core/Log.h>
+#include<Orion/Renderer/GraphicsRendering/Renderer2D.h>
 
 namespace PixelSimulation
 {
-
-	CellularMatrix::CellularMatrix(uint32_t  width, uint32_t height) 
+	
+	CellularMatrix::CellularMatrix(int32_t width, int32_t height) 
 		: 
-		m_Width(width),
-		m_Height(height), 
-		m_Matrix(std::vector<int32_t>((size_t)width * height))
+		m_Width(width / PixelSize),
+		m_Height(height / PixelSize),
+		m_Matrix(std::vector<AbstractPixel>(static_cast<size_t>(m_Width * m_Height)))
 	{
 		
 	}
-	 void CellularMatrix::SetCell(uint32_t index, int32_t val) 
+
+
+	void CellularMatrix::SetCell(uint32_t index, PixelTypes type) 
 	{
-		m_Matrix[index] = val;
+		m_Matrix[index].SetType(type);
 	}
-	 void CellularMatrix::SetCell(uint32_t x, uint32_t y, int32_t val) 
+
+
+	void CellularMatrix::SetCell(int32_t x, int32_t y, PixelTypes type)
 	{
-		m_Matrix[static_cast<size_t>(x + y * m_Width)] = val;
+		x /= PixelSize;
+		y /= PixelSize;
+		m_Matrix[static_cast<size_t>(x  + y  * m_Width)  ].SetType(type);
+
+
+		m_Matrix[static_cast<size_t>(x+1 + y * m_Width)].SetType(type);
+		m_Matrix[static_cast<size_t>(x-1 + y * m_Width)].SetType(type);
+		m_Matrix[static_cast<size_t>(x + (y+1) * m_Width)].SetType(type);
+		m_Matrix[static_cast<size_t>(x + (y-1) * m_Width)].SetType(type);
+		
+
 	}
-	 int32_t CellularMatrix::GetCell(uint32_t index) 
+
+
+	PixelTypes CellularMatrix::GetCell(uint32_t index)
 	{
-		return m_Matrix[index];
+		return m_Matrix[index].GetType();
 	}
+
+	void CellularMatrix::Invalidate(int32_t width, int32_t height)
+	{
+		width /= PixelSize;
+		height /= PixelSize;
+		std::vector<AbstractPixel> newMatrix(width * height);
+
+
+		auto srcIt = m_Matrix.begin();
+		int32_t rowIndex = 0;
+		int32_t index = 0;
+
+		for (auto it = newMatrix.begin(); it != newMatrix.end(); it++, index++, srcIt++)
+		{
+			if(index / width > rowIndex)
+			{
+				rowIndex = index / width;
+				srcIt += m_Width - index;
+			}
+
+			*it = *srcIt;
+			
+		}
+
+		m_Width = width;
+		m_Height = height;
+
+		m_Matrix = newMatrix;
+
+
+	}
+
 
 	void CellularMatrix::DrawElemets()
 	{
 
 		
-		float pixelSize = 1.0f;
-
-
+		
+		float x = 0.f;
+		float y = 0.f;
+		
 		for (int32_t i = 0; i < m_Matrix.size(); i++)
 		{
-			if (m_Matrix[i] == 0) continue;
-
-			if (m_Matrix[i] == 1)
+			PixelTypes type = m_Matrix[i].GetType();
+			if (type == EMPTY) 
 			{
-
-				float x = (i % m_Width);
-				float y = (i / m_Width);
-				if (i - m_Width > 0 && m_Matrix[i - m_Width] == 0)
-				{
-						m_Matrix[i] = 0;
-						m_Matrix[i - m_Width] = 1;
-				}
-				else if((i - m_Width)-1 > 0 && m_Matrix[(i - m_Width) - 1] == 0 && (i/m_Width) - (((i - m_Width) - 1) / m_Width) < 2)
-				{
-					m_Matrix[i] = 0;
-					m_Matrix[(i - m_Width) - 1] = 1;
-				}
-				else if((i - m_Width) + 1 > 0 && m_Matrix[(i - m_Width) + 1] == 0 && (((i - m_Width) + 1) / m_Width) != (i / m_Width))
-				{
-					m_Matrix[i] = 0;
-					m_Matrix[(i - m_Width) + 1] = 1;
-				}
-
-
-				Orion::Renderer2D::DrawBorderedQuad(glm::vec3(x * pixelSize, y* pixelSize, 0.0f), glm::vec2(pixelSize/2), glm::vec4(0.925f, 0.923f, 0.0f, 1.0f));
+				//Orion::Renderer2D::DrawBorderedQuad(position, halfExtend, glm::vec4(0.9f, 0.1f, 0.1f, 1.0f));
+				continue;
 			}
+
+			
+			x = (i % (m_Width));
+			y = (i / (m_Width));
+			glm::vec3 position{ (x * PixelSize) + PixelSize/2, (y * PixelSize) + PixelSize/2, 0.0f };
+			glm::vec2 halfExtend{ PixelSize / 2 };
+			m_Matrix[i].Draw(position, halfExtend);
+			m_Matrix[i].Update(m_Matrix,i,m_Width);
+
+
+
+
 		}
 
 
