@@ -39,8 +39,6 @@ namespace PixelSimulation
 			mouseY = (m_ScreenHeight - mouseY);
 
 			
-			
-
 			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_1))
 			{
 			
@@ -51,6 +49,12 @@ namespace PixelSimulation
 			{
 				
 				m_Matrix.SetCell(mouseX, mouseY, STONE);
+
+			}
+			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_3))
+			{
+
+				m_Matrix.SetCell(mouseX, mouseY, WATER);
 
 			}
 			if (Orion::Input::IsMouseButtonPressed(ORI_MOUSE_BUTTON_4))
