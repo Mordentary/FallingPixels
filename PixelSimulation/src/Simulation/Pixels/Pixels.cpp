@@ -14,14 +14,14 @@ namespace PixelSimulation
 			case SAND:
 			{
 
-				if (index - screenWidth > 0 && (matrix[index - screenWidth].IsEqual(EMPTY) || matrix[index - screenWidth].IsEqual(WATER)))
+				if (index - screenWidth >= 0 && (matrix[index - screenWidth].IsEqual(EMPTY) || matrix[index - screenWidth].IsEqual(WATER)))
 				{
 					matrix[index].SetType(matrix[index - screenWidth].GetType());
 					matrix[index - screenWidth].SetType(SAND);
 				}
 				else if
 				(
-						(index - screenWidth) - 1 > 0
+						(index - screenWidth) - 1 >= 0
 						&&
 						(matrix[(index - screenWidth) - 1].IsEqual(EMPTY) || matrix[(index - screenWidth) - 1].IsEqual(WATER))
 						&&
@@ -34,7 +34,7 @@ namespace PixelSimulation
 				}
 				else if
 				(
-						(index - screenWidth) + 1 > 0
+						(index - screenWidth) + 1 >= 0
 						&&
 						(matrix[(index - screenWidth) + 1].IsEqual(EMPTY) || matrix[(index - screenWidth) + 1].IsEqual(WATER))
 						&&
@@ -80,24 +80,15 @@ namespace PixelSimulation
 					matrix[(index - screenWidth) + 1].SetType(WATER);
 				}
 				else if
-				(
-						(index)+1 < matrix.size()
+						
+				(		(index)-1 >= 0
 						&&
-						matrix[(index)+1].IsEqual(EMPTY)
-						&&
-						(((index + 1) / screenWidth) == (index / screenWidth))
-				)
-
-				{
-					matrix[index].SetType(EMPTY);
-					matrix[index + 1].SetType(WATER);
-				}
-				else if
-				(		(index)-1 > 0
+						!matrix[(index)+1].IsEqual(EMPTY)
 						&&
 						matrix[(index)-1].IsEqual(EMPTY)
 						&&
 						(((index - 1) / screenWidth) == (index / screenWidth))
+						
 				)
 
 				{
@@ -105,7 +96,21 @@ namespace PixelSimulation
 					matrix[index - 1].SetType(WATER);
 				}
 			
-			
+				else if
+				(
+						
+						(index)+1 <= matrix.size()
+						&&
+						matrix[(index)+1].IsEqual(EMPTY)
+						&&
+						(((index + 1) / screenWidth) == (index / screenWidth))
+					
+				)
+
+				{
+					matrix[index].SetType(EMPTY);
+					matrix[index + 1].SetType(WATER);
+				}
 			
 			}
 			default: 

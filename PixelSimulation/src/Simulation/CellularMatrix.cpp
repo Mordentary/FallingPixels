@@ -29,10 +29,11 @@ namespace PixelSimulation
 		m_Matrix[static_cast<size_t>(x  + y  * m_Width)  ].SetType(type);
 
 
-		/*m_Matrix[static_cast<size_t>(x+1 + y * m_Width)].SetType(type);
+		
+		m_Matrix[static_cast<size_t>(x+1 + y * m_Width)].SetType(type);
 		m_Matrix[static_cast<size_t>(x-1 + y * m_Width)].SetType(type);
 		m_Matrix[static_cast<size_t>(x + (y+1) * m_Width)].SetType(type);
-		m_Matrix[static_cast<size_t>(x + (y-1) * m_Width)].SetType(type);*/
+		m_Matrix[static_cast<size_t>(x + (y-1) * m_Width)].SetType(type);
 		
 
 	}

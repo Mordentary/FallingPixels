@@ -21,6 +21,12 @@ namespace PixelSimulation
 		inline PixelTypes GetCell(uint32_t  index);
 		void DrawElemets();
 
+		//Help method
+		inline int32_t GetRow(int32_t index) { return index / m_Width; }
+		inline int32_t GetColumn(int32_t index) { return index / m_Height; }
+
+
+
 		std::pair<int32_t, int32_t> GetMatrixSize() { return { m_Width, m_Height }; };
 	
 	private:

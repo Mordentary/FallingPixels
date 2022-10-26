@@ -66,7 +66,6 @@ namespace PixelSimulation
 		
 
 
-
 			Orion::Renderer2D::BeginScene(Orion::CamerasController::GetActiveCamera());
 
 			m_Matrix.DrawElemets();
