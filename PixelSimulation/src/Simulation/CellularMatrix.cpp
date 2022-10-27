@@ -2,6 +2,7 @@
 #include<Orion/Core/Core.h>
 #include<Orion/Core/Log.h>
 #include<Orion/Renderer/GraphicsRendering/Renderer2D.h>
+#include"Pixels/Pixels.h"
 
 namespace PixelSimulation
 {
@@ -10,7 +11,7 @@ namespace PixelSimulation
 		: 
 		m_Width(width / PixelSize),
 		m_Height(height / PixelSize),
-		m_Matrix(std::vector<AbstractPixel>(static_cast<size_t>(m_Width * m_Height)))
+		m_Matrix(std::vector<AbstractPixel>(static_cast<size_t>(m_Width* m_Height)))
 	{
 		
 	}
@@ -26,13 +27,20 @@ namespace PixelSimulation
 	{
 		x /= PixelSize;
 		y /= PixelSize;
+
+		if (InBound(x , y))
 		m_Matrix[static_cast<size_t>(x  + y  * m_Width)  ].SetType(type);
 
-
-		
+		if(InBound(x+1,y))
 		m_Matrix[static_cast<size_t>(x+1 + y * m_Width)].SetType(type);
+
+		if (InBound(x - 1, y))
 		m_Matrix[static_cast<size_t>(x-1 + y * m_Width)].SetType(type);
+
+		if (InBound(x, y + 1))
 		m_Matrix[static_cast<size_t>(x + (y+1) * m_Width)].SetType(type);
+
+		if (InBound(x , y - 1))
 		m_Matrix[static_cast<size_t>(x + (y-1) * m_Width)].SetType(type);
 		
 
@@ -48,31 +56,38 @@ namespace PixelSimulation
 	{
 		width /= PixelSize;
 		height /= PixelSize;
-		std::vector<AbstractPixel> newMatrix(width * height);
 
+		int32_t differenceX = m_Width - width;
+		int32_t differenceY = m_Height - height;
 
-		auto srcIt = m_Matrix.begin();
-		int32_t rowIndex = 0;
-		int32_t index = 0;
-
-		for (auto it = newMatrix.begin(); it != newMatrix.end(); it++, index++, srcIt++)
-		{
-			if(index / width > rowIndex)
-			{
-				rowIndex = index / width;
-				srcIt += m_Width - index;
-			}
-
-			*it = *srcIt;
-			
-		}
 
 		m_Width = width;
 		m_Height = height;
 
-		m_Matrix = newMatrix;
+		std::vector<AbstractPixel> newVector(width * height);
+		if (differenceX <= 0 && differenceY <= 0)
+		{
+			for (size_t i = 0; i < m_Matrix.size(); i++)
+			{
+
+				if (InBound(GetCoord(i).x - differenceX * GetCoord(i).y, GetCoord(i).y + differenceY))
+					newVector[GetIndex(GetCoord(i).x - differenceX * GetCoord(i).y, GetCoord(i).y + differenceY)] = m_Matrix[i];
+			}
+		}
+		else if(differenceX >= 0 && differenceY >= 0)
+		{
+			for (size_t i = 0; i < newVector.size(); i++)
+			{
+
+				if (!InBound(GetCoord(i).x, GetCoord(i).y)) continue;
 
 
+				newVector[i] = m_Matrix[GetIndex(GetCoord(i).x + differenceX * GetCoord(i).y, GetCoord(i).y + differenceY)];
+
+			}
+		}
+		
+		m_Matrix = newVector;
 	}
 
 
@@ -99,7 +114,7 @@ namespace PixelSimulation
 			glm::vec3 position{ (x * PixelSize) + PixelSize/2, (y * PixelSize) + PixelSize/2, 0.0f };
 			glm::vec2 halfExtend{ PixelSize / 2 };
 			m_Matrix[i].Draw(position, halfExtend);
-			m_Matrix[i].Update(m_Matrix,i,m_Width);
+			m_Matrix[i].Update(*this, x, y);
 
 
 

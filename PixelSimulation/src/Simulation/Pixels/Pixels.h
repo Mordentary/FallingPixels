@@ -6,6 +6,8 @@
 
 namespace PixelSimulation
 {
+	class CellularMatrix;
+
 
 	enum PixelTypes
 	{
@@ -23,7 +25,10 @@ namespace PixelSimulation
 		~AbstractPixel() = default;
 
 		
-		void Update(std::vector<AbstractPixel>& matrix, int32_t index, int32_t screenWidth);
+		void Update(CellularMatrix& matrix, int32_t index);
+		void Update(CellularMatrix& matrix, int32_t x, int32_t y);
+
+
 		void Draw(glm::vec3& screenPosition, glm::vec2& size);
 		inline void SetType(PixelTypes type) { m_Type = type; };
 		inline bool IsEqual(PixelTypes type) { return m_Type == type; };

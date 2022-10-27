@@ -3,121 +3,149 @@
 #include <Orion/Core/Log.h>
 #include <Orion/Core/Core.h>
 #include <Orion/Renderer/GraphicsRendering/Renderer2D.cpp>
+#include"../CellularMatrix.h"
+
 
 namespace PixelSimulation
 {
-	void AbstractPixel::Update(std::vector<AbstractPixel>& matrix, int32_t index, int32_t screenWidth)
+
+
+	void AbstractPixel::Update(CellularMatrix& matrix, int32_t x, int32_t y)
 	{
-		switch(m_Type) 
+		switch (m_Type)
 		{
-			case STONE: break;
-			case SAND:
+		case STONE: break;
+		case SAND:
+		{
+
+			if
+				(
+					matrix.InBound(x, y - 1)
+					&&
+					(matrix[{x, y - 1}].IsEqual(EMPTY)
+						||
+						matrix[{x, y - 1}].IsEqual(WATER))
+					)
 			{
-
-				if (index - screenWidth >= 0 && (matrix[index - screenWidth].IsEqual(EMPTY) || matrix[index - screenWidth].IsEqual(WATER)))
-				{
-					matrix[index].SetType(matrix[index - screenWidth].GetType());
-					matrix[index - screenWidth].SetType(SAND);
-				}
-				else if
-				(
-						(index - screenWidth) - 1 >= 0
-						&&
-						(matrix[(index - screenWidth) - 1].IsEqual(EMPTY) || matrix[(index - screenWidth) - 1].IsEqual(WATER))
-						&&
-						(index / screenWidth) - (((index - screenWidth) - 1) / screenWidth) < 2
-				)
-				{
-					matrix[index].SetType((matrix[(index - screenWidth) - 1].GetType()));
-					matrix[(index - screenWidth) - 1].SetType(SAND);
-
-				}
-				else if
-				(
-						(index - screenWidth) + 1 >= 0
-						&&
-						(matrix[(index - screenWidth) + 1].IsEqual(EMPTY) || matrix[(index - screenWidth) + 1].IsEqual(WATER))
-						&&
-						(((index - screenWidth) + 1) / screenWidth) != (index / screenWidth)
-				)
-				{
-					matrix[index].SetType((matrix[(index - screenWidth) + 1].GetType()));
-					matrix[(index - screenWidth) + 1].SetType(SAND);
-				}
-
+				matrix[{x, y}].SetType(matrix[{x, y - 1}].GetType());
+				matrix[{x, y - 1}].SetType(SAND);
 			}
-			break;
-
-			case WATER: 
-			{
-				if (index - screenWidth > 0 && matrix[index - screenWidth].IsEqual(EMPTY))
-				{
-					matrix[index].SetType(EMPTY);
-					matrix[index - screenWidth].SetType(WATER);
-				}
-				else if
+			else if
+				(
+					matrix.InBound(x - 1, y - 1)
+					&&
 					(
-						(index - screenWidth) - 1 > 0
-						&&
-						matrix[(index - screenWidth) - 1].IsEqual(EMPTY)
-						&&
-						(index / screenWidth) - (((index - screenWidth) - 1) / screenWidth) < 2
+						matrix[{x - 1, y - 1}].IsEqual(EMPTY)
+						||
+						matrix[x - 1, y - 1].IsEqual(WATER)
 						)
-				{
-					matrix[index].SetType(EMPTY);
-					matrix[(index - screenWidth) - 1].SetType(WATER);
+					&&
+					matrix.GetRow(x, y) - matrix.GetRow(x - 1, y - 1) < 2
+					)
+			{
+				matrix[{x, y}].SetType(matrix[{x - 1, y - 1}].GetType());
+				matrix[{x - 1, y - 1}].SetType(SAND);
 
-				}
-				else if
-				(
-						(index - screenWidth) + 1 > 0
-						&&
-						matrix[(index - screenWidth) + 1].IsEqual(EMPTY)
-						&&
-						(((index - screenWidth) + 1) / screenWidth) != (index / screenWidth))
-				{
-					matrix[index].SetType(EMPTY);
-					matrix[(index - screenWidth) + 1].SetType(WATER);
-				}
-				else if
-						
-				(		(index)-1 >= 0
-						&&
-						!matrix[(index)+1].IsEqual(EMPTY)
-						&&
-						matrix[(index)-1].IsEqual(EMPTY)
-						&&
-						(((index - 1) / screenWidth) == (index / screenWidth))
-						
-				)
-
-				{
-					matrix[index].SetType(EMPTY);
-					matrix[index - 1].SetType(WATER);
-				}
-			
-				else if
-				(
-						
-						(index)+1 <= matrix.size()
-						&&
-						matrix[(index)+1].IsEqual(EMPTY)
-						&&
-						(((index + 1) / screenWidth) == (index / screenWidth))
-					
-				)
-
-				{
-					matrix[index].SetType(EMPTY);
-					matrix[index + 1].SetType(WATER);
-				}
-			
 			}
-			default: 
-				//ORI_ASSERT(false, "Uknown pixel type");
-				break;;
+			else if
+				(
+					matrix.InBound(x + 1, y - 1)
+					&& 
+					(
+						matrix[{x + 1, y - 1}].IsEqual(EMPTY)
+						||
+						matrix[x + 1, y - 1].IsEqual(WATER)
+					)
+					&&
+					matrix.GetRow(x, y) != matrix.GetRow(x + 1 , y - 1)
+					)
+			{
+				matrix[{x, y}].SetType(matrix[{x + 1, y - 1}].GetType());
+				matrix[{x + 1, y - 1}].SetType(SAND);
+			}
+
+		}
+		break;
+
+		case WATER:
+		{
+			if
+				(
+					matrix.InBound(x, y - 1)
+					&&
+					(
+						matrix[{x, y - 1}].IsEqual(EMPTY)
+					
+						)
+					)
+
+			{
+				matrix[{x, y}].SetType(matrix[{x, y - 1}].GetType());
+				matrix[{x, y - 1}].SetType(WATER);
+			}
+			else if
+				(
+					matrix.InBound(x - 1, y - 1)
+					&&
+					(
+						matrix[{x - 1, y - 1}].IsEqual(EMPTY)
+						
+						)
+					&&
+					matrix.GetRow(x, y) - matrix.GetRow(x - 1, y - 1) < 2
+					)
+
+			{
+				matrix[{x, y}].SetType(matrix[{x - 1, y - 1}].GetType());
+				matrix[{x - 1, y - 1}].SetType(WATER);
+
+			}
+			else if
+				(
+					matrix.InBound(x + 1, y - 1)
+					&&
+					(
+						matrix[{x + 1, y - 1}].IsEqual(EMPTY)
+						
+						)
+					&&
+					matrix.GetRow(x, y) != matrix.GetRow(x + 1, y - 1)
+					)
+
+			{
+				matrix[{x, y}].SetType(matrix[{x + 1, y - 1}].GetType());
+				matrix[{x + 1, y - 1}].SetType(WATER);
+			}
+			else if
+			(
+					matrix.InBound(x - 1, y)
+					&&
+					matrix[{x - 1, y}].IsEqual(EMPTY)
+			)
+
+			{
+				matrix[{x,y}].SetType(EMPTY);
+				matrix[{x - 1, y}].SetType(WATER);
+			}
+			else if
+				(
+					matrix.InBound(x + 1, y)
+					&&
+					matrix[{x + 1, y}].IsEqual(EMPTY)
+					)
+
+			{
+				matrix[{x, y}].SetType(EMPTY);
+				matrix[{x + 1, y}].SetType(WATER);
+			}
+
+		}
+		default:
+			//ORI_ASSERT(false, "Uknown pixel type");
+			break;;
 		}
 	}
+
 
 	void AbstractPixel::Draw(glm::vec3& screenPosition, glm::vec2& size)
 	{
