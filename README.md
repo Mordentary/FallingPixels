@@ -1,4 +1,4 @@
-# Falling Pixelx
+# Falling Pixels
 
 Powered by Orion game engine
 
