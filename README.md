@@ -1,9 +1,20 @@
 # Falling Pixels
 
-Powered by Orion game engine
+**Powered by Orion Game Engine**
+
+---
 
 ## Features:
 
--Simulation of different substances(Liquads, Gases, Solid materials)
+- Cellular Automata simulation:
+  - Simulation of various substances: **Wood**, **Stone**, **Water**, **Sand**, **Steam**, **Fire**.
+- Dynamic interaction between substances.
 
--Multithreading and division of cells into chunks(not implemented yet)
+---
+
+## Showcase:
+
+![Showcase](Showcase/PixelSimulation.gif)
+
+---
+
