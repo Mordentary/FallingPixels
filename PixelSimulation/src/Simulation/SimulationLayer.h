@@ -2,15 +2,18 @@
 #include<Orion.h>
 #include"CellularMatrix.h"
 
-
-namespace PixelSimulation 
+namespace PixelSimulation
 {
-
-
 	class SimulationLayer : public Orion::Layer
 	{
 	public:
-		SimulationLayer() : Orion::Layer("Simulation") {}
+		SimulationLayer()
+			: Orion::Layer("Simulation"),
+			m_SelectedPixelType(SAND), // Default selection
+			m_UpdateAccumulator(0.0f),
+			m_FixedTimeStep(1.0f / 60.0f)
+		{
+		};
 		void Init() override;
 
 		void OnUpdate(Orion::Timestep deltaTime) override;
@@ -23,7 +26,6 @@ namespace PixelSimulation
 
 		virtual void OnImGuiRender(Orion::Timestep ts) override;
 
-		
 	private:
 
 		PixelSimulation::CellularMatrix m_Matrix;
@@ -32,5 +34,8 @@ namespace PixelSimulation
 		Orion::Shared<Orion::EventDispatcher> m_Dispatcher;
 		Orion::Shared<Orion::OrthographicCamera> m_Camera;
 		glm::vec4 m_Color{ 0.842f, 0.523f, 0.768f, 1.0f };
+		PixelTypes m_SelectedPixelType;
+		float m_UpdateAccumulator;
+		const float m_FixedTimeStep;
 	};
 }
